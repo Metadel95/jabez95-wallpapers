@@ -1,0 +1,106 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import { PhoneFrame } from "@/components/PhoneFrame";
+import { getCatalog, formatCatalogNumber } from "@/lib/blob-store";
+import { siteConfig } from "@/lib/site-config";
+
+export const dynamic = "force-dynamic";
+
+export default async function WallpaperPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const catalog = await getCatalog();
+  const wallpaper = catalog.find((w) => w.id === id);
+
+  if (!wallpaper) notFound();
+
+  const date = new Date(wallpaper.createdAt).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+
+  return (
+    <>
+      <Header />
+      <main className="flex-1">
+        <div className="mx-auto max-w-6xl px-6 sm:px-10 pt-10">
+          <Link
+            href="/"
+            className="font-mono text-xs uppercase tracking-[0.15em] text-(--ink-soft) hover:text-(--clay) transition-colors"
+          >
+            &larr; All pressings
+          </Link>
+        </div>
+
+        <div className="mx-auto max-w-6xl px-6 sm:px-10 py-10 sm:py-16 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          <div className="max-w-[320px] sm:max-w-[360px] mx-auto w-full order-1">
+            <PhoneFrame src={wallpaper.imageUrl} alt={wallpaper.title} priority sizes="(max-width: 1024px) 70vw, 360px" />
+          </div>
+
+          <div className="order-2">
+            <p className="font-mono text-xs uppercase tracking-[0.25em] text-(--sage) mb-5">
+              {siteConfig.catalogPrefix} {formatCatalogNumber(wallpaper.catalogNumber)}
+            </p>
+            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl leading-[1.05] tracking-tight mb-6">
+              {wallpaper.title}
+            </h1>
+
+            {wallpaper.categories.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-8">
+                {wallpaper.categories.map((c) => (
+                  <span
+                    key={c}
+                    className="font-mono text-xs uppercase tracking-[0.15em] px-3 py-1.5 rounded-full border border-(--paper-line) text-(--ink-soft)"
+                  >
+                    {c}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            <dl className="grid grid-cols-2 gap-4 mb-10 max-w-sm font-mono text-sm">
+              <div>
+                <dt className="text-(--ink-faint) text-xs uppercase tracking-[0.15em] mb-1">
+                  Dimensions
+                </dt>
+                <dd>
+                  {wallpaper.width} &times; {wallpaper.height}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-(--ink-faint) text-xs uppercase tracking-[0.15em] mb-1">
+                  Pressed
+                </dt>
+                <dd>{date}</dd>
+              </div>
+            </dl>
+
+            <a
+              href={`/api/download/${wallpaper.id}`}
+              className="stub inline-flex items-center gap-4 bg-(--ink) text-(--paper) pl-6 pr-8 py-4 rounded-sm font-display italic text-xl border border-dashed border-(--paper) group"
+              download
+            >
+              Download full size
+              <span
+                aria-hidden="true"
+                className="inline-block transition-transform duration-300 group-hover:translate-y-1"
+              >
+                &darr;
+              </span>
+            </a>
+            <p className="font-mono text-xs text-(--ink-faint) mt-4">
+              Free for personal use. Wallpaper sized for phone screens.
+            </p>
+          </div>
+        </div>
+      </main>
+      <Footer />
+    </>
+  );
+}

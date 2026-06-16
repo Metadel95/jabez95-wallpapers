@@ -1,0 +1,183 @@
+@import "tailwindcss";
+
+:root {
+  /* Paper / gallery palette */
+  --paper: #efeae1;
+  --paper-deep: #e3dccb;
+  --paper-line: #d6cdba;
+
+  --ink: #1c1a16;
+  --ink-soft: #756f63;
+  --ink-faint: #a39c8d;
+
+  --sage: #6c7c56;
+  --sage-deep: #4f5c3e;
+  --clay: #b8552c;
+
+  /* Studio (admin) palette */
+  --studio-bg: #15130f;
+  --studio-surface: #1f1c16;
+  --studio-surface-raised: #292419;
+  --studio-line: #38332a;
+  --studio-text: #f3eee3;
+  --studio-text-soft: #9c9587;
+  --studio-accent: #9bb37e;
+  --studio-clay: #d97a52;
+
+  --font-display: "Fraunces", serif;
+  --font-body: "Instrument Sans", sans-serif;
+  --font-mono: "Space Mono", monospace;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-deep: var(--paper-deep);
+  --color-paper-line: var(--paper-line);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-sage: var(--sage);
+  --color-sage-deep: var(--sage-deep);
+  --color-clay: var(--clay);
+
+  --color-studio-bg: var(--studio-bg);
+  --color-studio-surface: var(--studio-surface);
+  --color-studio-surface-raised: var(--studio-surface-raised);
+  --color-studio-line: var(--studio-line);
+  --color-studio-text: var(--studio-text);
+  --color-studio-text-soft: var(--studio-text-soft);
+  --color-studio-accent: var(--studio-accent);
+  --color-studio-clay: var(--studio-clay);
+
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-mono: var(--font-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+}
+
+::selection {
+  background: var(--sage);
+  color: var(--paper);
+}
+
+/* Visible keyboard focus everywhere */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--clay);
+  outline-offset: 3px;
+}
+
+/* ---------- Phone frame, the signature element ---------- */
+.phone-frame {
+  position: relative;
+  aspect-ratio: 9 / 19.5;
+  width: 100%;
+  border-radius: 1.6rem;
+  border: 1.5px solid currentColor;
+  padding: 0.45rem;
+  background: transparent;
+}
+
+.phone-frame__screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 1.15rem;
+  overflow: hidden;
+  background: var(--paper-deep);
+}
+
+.phone-frame__screen img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.phone-frame__notch {
+  position: absolute;
+  top: 0.45rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 34%;
+  height: 0.95rem;
+  background: var(--paper);
+  border-radius: 0 0 0.7rem 0.7rem;
+  z-index: 5;
+}
+
+.phone-frame--dark .phone-frame__notch {
+  background: var(--studio-bg);
+}
+
+/* ---------- Motion, reduced for those who ask ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  .lift-on-hover {
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+  }
+  .lift-on-hover:hover {
+    transform: translateY(-6px) rotate(-0.4deg);
+  }
+
+  .reveal {
+    animation: reveal-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- Ticket / stub detail for downloads ---------- */
+.stub {
+  position: relative;
+}
+
+.stub::before,
+.stub::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background: var(--paper);
+  border-radius: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.stub::before {
+  left: -7px;
+}
+
+.stub::after {
+  right: -7px;
+}
+
+.studio .stub::before,
+.studio .stub::after {
+  background: var(--studio-bg);
+}
