@@ -2,9 +2,27 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { upload } from "@vercel/blob/client";
 import { PhoneFrame } from "@/components/PhoneFrame";
+import { makeId } from "@/lib/slug";
 import { siteConfig } from "@/lib/site-config";
 import type { Wallpaper } from "@/lib/types";
+
+function readImageDimensions(file: File): Promise<{ width: number; height: number }> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+    img.onload = () => {
+      resolve({ width: img.naturalWidth, height: img.naturalHeight });
+      URL.revokeObjectURL(objectUrl);
+    };
+    img.onerror = () => {
+      resolve({ width: 0, height: 0 });
+      URL.revokeObjectURL(objectUrl);
+    };
+    img.src = objectUrl;
+  });
+}
 
 function formatCatalogNumber(n: number) {
   return n.toString().padStart(3, "0");
@@ -64,18 +82,41 @@ function UploadPanel({ onUploaded }: { onUploaded: (w: Wallpaper) => void }) {
     setStatus("uploading");
     setError(null);
 
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("title", title.trim());
-    formData.append("categories", categories);
-
     try {
-      const res = await fetch("/api/studio/upload", {
+      const id = makeId(title.trim());
+      const extMatch = file.name.match(/\.([a-zA-Z0-9]+)$/);
+      const ext = extMatch ? extMatch[1].toLowerCase() : "jpg";
+      const pathname = `wallpapers/${id}.${ext}`;
+
+      const [{ width, height }, blob] = await Promise.all([
+        readImageDimensions(file),
+        upload(pathname, file, {
+          access: "public",
+          handleUploadUrl: "/api/studio/upload-token",
+          contentType: file.type,
+        }),
+      ]);
+
+      const res = await fetch("/api/studio/finalize", {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id,
+          title: title.trim(),
+          categories: categories
+            .split(",")
+            .map((c) => c.trim())
+            .filter(Boolean),
+          url: blob.url,
+          pathname: blob.pathname,
+          filename: file.name,
+          width,
+          height,
+          size: file.size,
+        }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Upload failed.");
+      if (!res.ok) throw new Error(data.error || "Couldn't save the catalog entry.");
 
       onUploaded(data.wallpaper);
       setFile(null);
