@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCatalog } from "@/lib/blob-store";
+import { getCatalogFromBlobStorage } from "@/lib/blob-store";
 
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const catalog = await getCatalog();
+  const catalog = await getCatalogFromBlobStorage();
   const wallpaper = catalog.find((w) => w.id === id);
 
   if (!wallpaper) {

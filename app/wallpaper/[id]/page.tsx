@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { PhoneFrame } from "@/components/PhoneFrame";
-import { getCatalog, formatCatalogNumber } from "@/lib/blob-store";
+import { getCatalogFromBlobStorage, formatCatalogNumber } from "@/lib/blob-store";
 import { siteConfig } from "@/lib/site-config";
 
 export const dynamic = "force-dynamic";
@@ -14,7 +14,7 @@ export default async function WallpaperPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const catalog = await getCatalog();
+  const catalog = await getCatalogFromBlobStorage();
   const wallpaper = catalog.find((w) => w.id === id);
 
   if (!wallpaper) notFound();
@@ -64,15 +64,7 @@ export default async function WallpaperPage({
               </div>
             )}
 
-            <dl className="grid grid-cols-2 gap-4 mb-10 max-w-sm font-mono text-sm">
-              <div>
-                <dt className="text-(--ink-faint) text-xs uppercase tracking-[0.15em] mb-1">
-                  Dimensions
-                </dt>
-                <dd>
-                  {wallpaper.width} &times; {wallpaper.height}
-                </dd>
-              </div>
+            <dl className="mb-10 max-w-sm font-mono text-sm">
               <div>
                 <dt className="text-(--ink-faint) text-xs uppercase tracking-[0.15em] mb-1">
                   Pressed

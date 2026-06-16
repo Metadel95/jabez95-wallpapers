@@ -1,7 +1,58 @@
-import { head, put } from "@vercel/blob";
+import { head, list, put } from "@vercel/blob";
 import type { Wallpaper } from "./types";
 
 const CATALOG_PATHNAME = "catalog.json";
+const WALLPAPERS_PREFIX = "wallpapers/";
+const IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg", ".webp", ".gif"];
+
+/**
+ * "be-holy-final.png" -> "Be Holy Final"
+ */
+function humanizeFilename(filename: string): string {
+  const withoutExt = filename.replace(/\.[^.]+$/, "");
+  const spaced = withoutExt.replace(/[-_]+/g, " ").trim();
+  return spaced.replace(/\b\w/g, (c) => c.toUpperCase()) || filename;
+}
+
+/**
+ * Builds the catalog directly from whatever image files exist under
+ * wallpapers/ in Blob storage — no separate index file to keep in sync.
+ * This is what lets you upload straight through the Vercel dashboard's
+ * Blob browser (or the CLI) and have it show up on the site automatically.
+ *
+ * Titles are derived from the filename, and the catalog number reflects
+ * upload order (oldest = No. 001). There's no categories support this
+ * way, since plain file uploads don't carry that metadata.
+ */
+export async function getCatalogFromBlobStorage(): Promise<Wallpaper[]> {
+  const { blobs } = await list({ prefix: WALLPAPERS_PREFIX });
+
+  const images = blobs.filter((b) =>
+    IMAGE_EXTENSIONS.some((ext) => b.pathname.toLowerCase().endsWith(ext))
+  );
+
+  // Oldest first, so catalog numbers stay stable as new pieces are added.
+  images.sort((a, b) => a.uploadedAt.getTime() - b.uploadedAt.getTime());
+
+  return images.map((blob, index) => {
+    const filename = blob.pathname.slice(WALLPAPERS_PREFIX.length);
+    const id = filename.replace(/\.[^.]+$/, "");
+
+    return {
+      id,
+      title: humanizeFilename(filename),
+      categories: [],
+      imageUrl: blob.url,
+      pathname: blob.pathname,
+      filename,
+      width: 0,
+      height: 0,
+      size: blob.size,
+      createdAt: blob.uploadedAt.toISOString(),
+      catalogNumber: index + 1,
+    } satisfies Wallpaper;
+  });
+}
 
 /**
  * The catalog is a single JSON file living alongside the images in Blob

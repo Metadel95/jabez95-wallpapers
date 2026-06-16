@@ -3,12 +3,12 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/Hero";
 import { CatalogGrid } from "@/components/CatalogGrid";
-import { getCatalog, sortByNewest } from "@/lib/blob-store";
+import { getCatalogFromBlobStorage, sortByNewest } from "@/lib/blob-store";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const catalog = sortByNewest(await getCatalog());
+  const catalog = sortByNewest(await getCatalogFromBlobStorage());
 
   return (
     <>
