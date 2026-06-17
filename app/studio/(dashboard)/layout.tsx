@@ -25,6 +25,12 @@ export default async function DashboardLayout({
           </div>
           <div className="flex items-center gap-6">
             <Link
+              href="/studio/downloads"
+              className="font-mono text-xs uppercase tracking-[0.15em] text-(--studio-text-soft) hover:text-(--studio-accent) transition-colors"
+            >
+              Downloads
+            </Link>
+            <Link
               href="/"
               target="_blank"
               className="font-mono text-xs uppercase tracking-[0.15em] text-(--studio-text-soft) hover:text-(--studio-accent) transition-colors"

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { after } from "next/server";
 import { getCatalogFromBlobStorage } from "@/lib/blob-store";
+import { incrementDownloadCount } from "@/lib/download-counts";
 
 export async function GET(
   req: NextRequest,
@@ -17,6 +19,10 @@ export async function GET(
   if (!upstream.ok || !upstream.body) {
     return NextResponse.json({ error: "Couldn't load the file." }, { status: 502 });
   }
+
+  // Runs after the response has been sent, so logging the download never
+  // adds latency to the actual file transfer.
+  after(() => incrementDownloadCount(id));
 
   return new NextResponse(upstream.body, {
     headers: {
