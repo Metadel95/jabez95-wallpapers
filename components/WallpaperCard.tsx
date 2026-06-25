@@ -18,7 +18,7 @@ export function WallpaperCard({ wallpaper }: { wallpaper: Wallpaper }) {
           alt={wallpaper.title}
           fill
           sizes="(max-width: 768px) 45vw, 320px"
-          className="object-cover"
+          className="object-contain group-hover:scale-105 transition-transform duration-300"
         />
       </div>
       <div className="mt-4 flex items-baseline justify-between gap-3 border-t border-(--paper-line) pt-3">

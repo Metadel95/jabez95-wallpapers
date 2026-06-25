@@ -47,7 +47,7 @@ export default async function WallpaperPage({
                 fill
                 priority
                 sizes="(max-width: 1024px) 70vw, 360px"
-                className="object-cover"
+                className="object-cover group-hover:scale-105 transition-transform duration-300"
               />
             </div>
           </div>

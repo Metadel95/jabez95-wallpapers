@@ -51,7 +51,7 @@ export function Hero({ wallpaper }: { wallpaper: Wallpaper }) {
               fill
               priority
               sizes="(max-width: 1024px) 70vw, 320px"
-              className="object-cover"
+              className="object-hover group-hover:scale-105 transition-transform duration-300"
             />
           </div>
         </div>
