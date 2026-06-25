@@ -44,14 +44,15 @@ export function Hero({ wallpaper }: { wallpaper: Wallpaper }) {
         </div>
 
         <div className="reveal order-1 lg:order-2 max-w-[280px] sm:max-w-[320px] mx-auto w-full">
-          <div className="lift-on-hover relative aspect-[9/19.5] rounded-md overflow-hidden bg-(--paper-deep)">
+          <div className="lift-on-hover rounded-md overflow-hidden">
             <Image
               src={wallpaper.imageUrl}
               alt={wallpaper.title}
-              fill
+              width={360}
+              height={780}
               priority
               sizes="(max-width: 1024px) 70vw, 320px"
-              className="object-hover group-hover:scale-105 transition-transform duration-300"
+              className="w-full h-auto block"
             />
           </div>
         </div>
