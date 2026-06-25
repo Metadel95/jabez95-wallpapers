@@ -82,7 +82,7 @@ export default async function WallpaperPage({
               </div>
             </dl>
 
-            
+            <a
               href={`/api/download/${wallpaper.id}`}
               className="stub inline-flex items-center gap-4 bg-(--ink) text-(--paper) pl-6 pr-8 py-4 rounded-sm font-display italic text-xl border border-dashed border-(--paper) group"
               download
