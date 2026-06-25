@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PhoneFrame } from "./PhoneFrame";
+import Image from "next/image";
 import { formatCatalogNumber } from "@/lib/blob-store";
 import { siteConfig } from "@/lib/site-config";
 import type { Wallpaper } from "@/lib/types";
@@ -12,10 +12,15 @@ export function WallpaperCard({ wallpaper }: { wallpaper: Wallpaper }) {
 
   return (
     <Link href={`/wallpaper/${wallpaper.id}`} className="group block">
-      <div className="lift-on-hover">
-        <PhoneFrame src={wallpaper.imageUrl} alt={wallpaper.title} />
+      <div className="lift-on-hover relative aspect-[9/19.5] w-full rounded-md overflow-hidden bg-(--paper-deep)">
+        <Image
+          src={wallpaper.imageUrl}
+          alt={wallpaper.title}
+          fill
+          sizes="(max-width: 768px) 45vw, 320px"
+          className="object-cover"
+        />
       </div>
-      {/* Gallery placard */}
       <div className="mt-4 flex items-baseline justify-between gap-3 border-t border-(--paper-line) pt-3">
         <span className="font-display text-lg leading-tight group-hover:text-(--clay) transition-colors">
           {wallpaper.title}

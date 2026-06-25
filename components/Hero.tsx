@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PhoneFrame } from "./PhoneFrame";
+import Image from "next/image";
 import { formatCatalogNumber } from "@/lib/blob-store";
 import { siteConfig } from "@/lib/site-config";
 import type { Wallpaper } from "@/lib/types";
@@ -44,12 +44,14 @@ export function Hero({ wallpaper }: { wallpaper: Wallpaper }) {
         </div>
 
         <div className="reveal order-1 lg:order-2 max-w-[280px] sm:max-w-[320px] mx-auto w-full">
-          <div className="lift-on-hover">
-            <PhoneFrame
+          <div className="lift-on-hover relative aspect-[9/19.5] rounded-md overflow-hidden bg-(--paper-deep)">
+            <Image
               src={wallpaper.imageUrl}
               alt={wallpaper.title}
+              fill
               priority
               sizes="(max-width: 1024px) 70vw, 320px"
+              className="object-cover"
             />
           </div>
         </div>
