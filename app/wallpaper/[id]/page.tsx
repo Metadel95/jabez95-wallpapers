@@ -1,8 +1,8 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { PhoneFrame } from "@/components/PhoneFrame";
 import { getCatalogFromBlobStorage, formatCatalogNumber } from "@/lib/blob-store";
 import { siteConfig } from "@/lib/site-config";
 
@@ -40,7 +40,16 @@ export default async function WallpaperPage({
 
         <div className="mx-auto max-w-6xl px-6 sm:px-10 py-10 sm:py-16 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           <div className="max-w-[320px] sm:max-w-[360px] mx-auto w-full order-1">
-            <PhoneFrame src={wallpaper.imageUrl} alt={wallpaper.title} priority sizes="(max-width: 1024px) 70vw, 360px" />
+            <div className="lift-on-hover relative aspect-[9/19.5] rounded-md overflow-hidden bg-(--paper-deep)">
+              <Image
+                src={wallpaper.imageUrl}
+                alt={wallpaper.title}
+                fill
+                priority
+                sizes="(max-width: 1024px) 70vw, 360px"
+                className="object-cover"
+              />
+            </div>
           </div>
 
           <div className="order-2">
@@ -73,7 +82,7 @@ export default async function WallpaperPage({
               </div>
             </dl>
 
-            <a
+            
               href={`/api/download/${wallpaper.id}`}
               className="stub inline-flex items-center gap-4 bg-(--ink) text-(--paper) pl-6 pr-8 py-4 rounded-sm font-display italic text-xl border border-dashed border-(--paper) group"
               download
